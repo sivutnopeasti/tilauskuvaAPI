@@ -137,6 +137,51 @@
         @media (max-width: 480px) {
             .industry-select { grid-template-columns: 1fr; }
         }
+
+        /* ─── Pätevyys-checkboxlista ─────────────────────────────────── */
+        .cert-hint { font-size: 0.8rem; font-weight: 400; color: #999; margin-left: 0.4rem; }
+        .cert-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+            margin-top: 0.6rem;
+        }
+        .cert-category {
+            background: #f8f9fa;
+            border: 1px solid #e2e6ea;
+            border-radius: 10px;
+            padding: 0.9rem 1rem;
+        }
+        .cert-cat-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1e3a5f;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.6rem;
+            padding-bottom: 0.45rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .cert-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.45rem;
+            padding: 0.28rem 0;
+            cursor: pointer;
+            font-size: 0.87rem;
+            color: #444;
+            line-height: 1.35;
+        }
+        .cert-item input[type="checkbox"] {
+            margin-top: 0.15rem;
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+            accent-color: #1e3a5f;
+            cursor: pointer;
+        }
+        .cert-item:hover span { color: #1e3a5f; }
+        @media (max-width: 600px) { .cert-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="order-page">
@@ -402,12 +447,7 @@
                             <div class="hint">Referenssit lisätään sivuille omaksi osiokseen tai galleriaksi.</div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="patevyydet">Pätevyydet ja sertifikaatit</label>
-                                <input type="text" name="patevyydet" id="patevyydet" placeholder="Esim. T3-sertifikaatti, RI-pätevyys...">
-                            </div>
-                            <div class="form-group">
+                        <div class="form-group">
                                 <label for="yrityksen_koko">Yrityksen koko</label>
                                 <select name="yrityksen_koko" id="yrityksen_koko">
                                     <option value="">Valitse...</option>
@@ -416,7 +456,39 @@
                                     <option value="6-10">6–10 henkilöä</option>
                                     <option value="yli10">Yli 10 henkilöä</option>
                                 </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Pätevyydet ja sertifikaatit <span class="cert-hint">– valitse kaikki mitä teillä on</span></label>
+                            <div class="cert-grid">
+                                <div class="cert-category">
+                                    <div class="cert-cat-title">💰 Luottoluokitukset</div>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="Suomen Vahvimmat AAA"><span>Suomen Vahvimmat AAA (Asiakastieto)</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="Suomen Vahvimmat AA"><span>Suomen Vahvimmat AA+ tai AA</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="Kauppalehti Menestyjä"><span>Kauppalehti Menestyjä-sertifikaatti</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="D&amp;B Rating AAA/AA"><span>Dun &amp; Bradstreet (D&amp;B) AAA/AA</span></label>
+                                </div>
+                                <div class="cert-category">
+                                    <div class="cert-cat-title">⚡ S-pätevyydet (sähkö)</div>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="S1-sähköpätevyys"><span>S1 – kaikki sähkötyöt</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="S2-sähköpätevyys"><span>S2 – kiinteistöjen sähkötyöt</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="S3-sähköpätevyys"><span>S3 – sähkölaitteiden korjaus</span></label>
+                                </div>
+                                <div class="cert-category">
+                                    <div class="cert-cat-title">✅ Laatu ja hallinto</div>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="Luotettava Kumppani (Vastuu Group)"><span>Luotettava Kumppani (Vastuu Group)</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="RALA-pätevyys"><span>RALA-pätevyys</span></label>
+                                </div>
+                                <div class="cert-category">
+                                    <div class="cert-cat-title">🔧 Tekninen erikoisosaaminen</div>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="Eurofins märkätilat"><span>Eurofins – Märkätilat</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="Eurofins rakenteiden tiiviys/kosteus"><span>Eurofins – Rakenteiden tiiviys/kosteus</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="AHA-asiantuntija (asbesti)"><span>AHA-asiantuntija (Asbesti)</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="KVV-pätevyys (putkityöt)"><span>KVV-pätevyys (Putkityöt)</span></label>
+                                    <label class="cert-item"><input type="checkbox" class="patevyys-check" value="Tieturva (maanrakennus)"><span>Tieturva (Maanrakennus)</span></label>
+                                </div>
                             </div>
+                            <input type="hidden" name="patevyydet" id="patevyydet">
                         </div>
                     </div>
 
@@ -1382,6 +1454,10 @@
                 document.getElementById('kuvat-urlit-hidden').value = uploadedUrls.join(',');
                 document.getElementById('fileInput').value = '';
             }
+
+            // Kootaan pätevyydet-checkboxit hidden inputtiin
+            const checkedCerts = [...document.querySelectorAll('.patevyys-check:checked')].map(cb => cb.value);
+            document.getElementById('patevyydet').value = checkedCerts.join(', ');
 
             document.getElementById('loadingText').textContent = 'Lähetetään tilausta...';
             this.submit();

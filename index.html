@@ -602,6 +602,45 @@
                         </label>
                     </div>
 
+                    <!-- Google Maps -->
+                    <div class="form-group">
+                        <label>Google Maps -sijainti</label>
+                        <div class="hint" style="margin-bottom:0.5rem;">Lisätään karttaosio sivulle, josta kävijä näkee toimipaikan sijainnin suoraan. Kirjoita alla tarkka osoite tai liitä Google Maps -linkki.</div>
+                        <label class="cert-item">
+                            <input type="checkbox" name="google_maps" id="google-maps-cb" value="Kyllä" onchange="toggleGoogleMapsUrl()">
+                            <span>Kyllä, lisää karttaosio sivulle</span>
+                        </label>
+                        <div id="google-maps-url-row" style="display:none; margin-top:0.75rem;">
+                            <input type="text" name="google_maps_url" id="google_maps_url" placeholder="Esim. Hämeenkatu 1, Tampere tai liitä Google Maps -linkki">
+                            <div class="hint">Kirjoita yrityksen tarkka osoite tai liitä Google Maps -linkki</div>
+                        </div>
+                    </div>
+
+                    <!-- Google arvostelut -->
+                    <div class="form-group">
+                        <label>Google-arvostelut</label>
+                        <div class="hint" style="margin-bottom:0.5rem;">Näytä Google-arvostelut sivulla automaattisesti päivittyvänä widgettinä. Käytämme <strong>Trustindex</strong>-palvelua (ilmainen). Saat ohjeet tilauksen yhteydessä — tarvitset vain Google Business Profile -profiilin.</div>
+                        <label class="cert-item">
+                            <input type="checkbox" name="google_arvostelut" id="google-arvostelut-cb" value="Kyllä">
+                            <span>Kyllä, lisää Google-arvostelut-osio sivulle</span>
+                        </label>
+                    </div>
+
+                    <!-- Referenssikuvagalleria -->
+                    <div class="form-group">
+                        <label>Referenssikuvagalleria</label>
+                        <div class="hint" style="margin-bottom:0.5rem;">Lisää kuvia aiemmista töistäsi kuvateksteineen. Galleria näkyy omana osionaan sivulla.</div>
+                        <label class="cert-item">
+                            <input type="checkbox" name="referenssigalleria" id="ref-gallery-cb" value="Kyllä" onchange="toggleRefGallery()">
+                            <span>Kyllä, lisää referenssikuvagalleria</span>
+                        </label>
+                        <div id="ref-gallery-section" style="display:none; margin-top:1rem;">
+                            <div id="ref-images-list"></div>
+                            <button type="button" class="btn btn-secondary" style="margin-top:0.5rem; font-size:0.9rem;" onclick="addRefImage()">＋ Lisää referenssikuva</button>
+                            <input type="hidden" name="referenssi_kuvat" id="referenssi-kuvat-hidden">
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label for="vapaat_toiveet">Kerro vapaasti toiveistasi</label>
                         <textarea name="vapaat_toiveet" id="vapaat_toiveet" placeholder="Kerro tähän vapaasti toiveistasi. Mitä tyyliä, tunnelmaa tai värejä kaipaat? Onko olemassa sivustoja, joista pidät? Mitä haluat sivuillasi ehdottomasti olevan? Mitä yksityiskohtia pidät tärkeänä? Mitä enemmän kerrot, sitä paremmin voimme toteuttaa juuri sinulle sopivat sivut. Voit myös liittää linkkejä inspiraatioksi!"></textarea>
@@ -1537,10 +1576,86 @@
             const checkedCerts = [...document.querySelectorAll('.patevyys-check:checked')].map(cb => cb.value);
             document.getElementById('patevyydet').value = checkedCerts.join(', ');
 
+            // Ladataan referenssikuvat ImgBB:hen ja kootaan JSON
+            const refCb = document.getElementById('ref-gallery-cb');
+            if (refCb && refCb.checked && refImages.length > 0) {
+                const refData = [];
+                for (let i = 0; i < refImages.length; i++) {
+                    const r = refImages[i];
+                    document.getElementById('loadingText').textContent = `Ladataan referenssikuvaa ${i + 1} / ${refImages.length}...`;
+                    const caption = document.getElementById(`ref-caption-${r.id}`)?.value?.trim() || '';
+                    if (r.file) {
+                        const compressed = await compressImage(r.file, 1200, 1200, 0.75);
+                        const url = await uploadToImgBB(compressed.file || r.file);
+                        if (url) refData.push({ url, caption });
+                    }
+                }
+                document.getElementById('referenssi-kuvat-hidden').value = JSON.stringify(refData);
+            }
 
             document.getElementById('loadingText').textContent = 'Lähetetään tilausta...';
             this.submit();
         });
+
+        // ─── Google Maps toggle ────────────────────────────────────
+        function toggleGoogleMapsUrl() {
+            const cb = document.getElementById('google-maps-cb');
+            document.getElementById('google-maps-url-row').style.display = cb.checked ? 'block' : 'none';
+        }
+
+        // ─── Referenssigalleria ────────────────────────────────────
+        function toggleRefGallery() {
+            const cb = document.getElementById('ref-gallery-cb');
+            document.getElementById('ref-gallery-section').style.display = cb.checked ? 'block' : 'none';
+        }
+
+        let refImageCounter = 0;
+        const refImages = [];
+
+        function addRefImage() {
+            const id = ++refImageCounter;
+            const list = document.getElementById('ref-images-list');
+            const item = document.createElement('div');
+            item.id = `ref-item-${id}`;
+            item.style.cssText = 'border:1px solid #dde2ec; border-radius:10px; padding:0.75rem; margin-bottom:0.75rem; background:#f9fafc;';
+            item.innerHTML = `
+                <div style="display:flex; gap:0.75rem; align-items:flex-start; flex-wrap:wrap;">
+                    <div id="ref-preview-${id}" onclick="document.getElementById('ref-file-${id}').click()"
+                        style="width:80px;height:60px;background:#e8ecf4;border-radius:6px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:0.72rem;color:#777;cursor:pointer;">
+                        Lataa kuva
+                    </div>
+                    <div style="flex:1; min-width:140px;">
+                        <input type="text" id="ref-caption-${id}" placeholder="Kuvateksti (esim. Omakotitalo, Tampere 2024)" style="width:100%;box-sizing:border-box;margin-bottom:0.4rem;">
+                        <input type="file" id="ref-file-${id}" accept="image/*" style="display:none" onchange="onRefFileSelected(${id}, this)">
+                        <button type="button" style="font-size:0.78rem;background:none;border:1px solid #cfd5e3;border-radius:6px;padding:4px 10px;cursor:pointer;color:#555;"
+                            onclick="document.getElementById('ref-file-${id}').click()">Valitse kuva</button>
+                    </div>
+                    <button type="button" onclick="removeRefImage(${id})"
+                        style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:#aaa;align-self:flex-start;padding:0;">✕</button>
+                </div>`;
+            list.appendChild(item);
+            refImages.push({ id, file: null });
+        }
+
+        function onRefFileSelected(id, input) {
+            if (!input.files.length) return;
+            const file = input.files[0];
+            const entry = refImages.find(r => r.id === id);
+            if (entry) entry.file = file;
+            const preview = document.getElementById(`ref-preview-${id}`);
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeRefImage(id) {
+            const idx = refImages.findIndex(r => r.id === id);
+            if (idx >= 0) refImages.splice(idx, 1);
+            const item = document.getElementById(`ref-item-${id}`);
+            if (item) item.remove();
+        }
 
         // Hinnasto tabs
         function switchHinnasto(mode) {

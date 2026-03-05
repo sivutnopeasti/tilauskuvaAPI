@@ -612,14 +612,30 @@
                     <!-- Google Maps -->
                     <div class="form-group">
                         <label>Google Maps -sijainti</label>
-                        <div class="hint" style="margin-bottom:0.5rem;">Lisätään karttaosio sivulle, josta kävijä näkee toimipaikan sijainnin suoraan. Kirjoita alle tarkka osoite tai liitä Google Maps -linkki.</div>
+                        <div class="hint" style="margin-bottom:0.5rem;">Lisätään karttaosio sivulle. Valitse näytetäänkö tietty toimipaikka vai toimialue.</div>
                         <label class="cert-item">
                             <input type="checkbox" name="google_maps" id="google-maps-cb" value="Kyllä" onchange="toggleGoogleMapsUrl()">
                             <span>Kyllä, lisää karttaosio sivulle</span>
                         </label>
                         <div id="google-maps-url-row" style="display:none; margin-top:0.75rem;">
-                            <input type="text" name="google_maps_url" id="google_maps_url" placeholder="Esim. Hämeenkatu 1, Tampere tai liitä Google Maps -linkki">
-                            <div class="hint">Kirjoita yrityksen tarkka osoite tai liitä Google Maps -linkki</div>
+                            <div style="display:flex; gap:1rem; margin-bottom:0.75rem; flex-wrap:wrap;">
+                                <label class="cert-item">
+                                    <input type="radio" name="google_maps_type" value="toimipaikka" id="maps-type-paikka" checked onchange="toggleMapsType()">
+                                    <span>Tietty toimipaikka</span>
+                                </label>
+                                <label class="cert-item">
+                                    <input type="radio" name="google_maps_type" value="toimialue" id="maps-type-alue" onchange="toggleMapsType()">
+                                    <span>Toimialue</span>
+                                </label>
+                            </div>
+                            <div id="maps-paikka-row">
+                                <input type="text" name="google_maps_url" id="google_maps_url" placeholder="Esim. Hämeenkatu 1, Tampere tai liitä Google Maps -linkki">
+                                <div class="hint">Kirjoita tarkka osoite tai liitä Google Maps -linkki</div>
+                            </div>
+                            <div id="maps-alue-row" style="display:none;">
+                                <input type="text" name="google_maps_toimialue" id="google_maps_toimialue" placeholder="Esim. Tampere ja lähikunnat">
+                                <div class="hint">Kartta näyttää toimialueen yleiskuvan, ei kiinteää osoitepistettä</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1603,6 +1619,12 @@
         function toggleGoogleMapsUrl() {
             const cb = document.getElementById('google-maps-cb');
             document.getElementById('google-maps-url-row').style.display = cb.checked ? 'block' : 'none';
+        }
+
+        function toggleMapsType() {
+            const isAlue = document.getElementById('maps-type-alue').checked;
+            document.getElementById('maps-paikka-row').style.display = isAlue ? 'none' : 'block';
+            document.getElementById('maps-alue-row').style.display = isAlue ? 'block' : 'none';
         }
 
         // ─── Referenssigalleria ────────────────────────────────────

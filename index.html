@@ -450,20 +450,34 @@
                         </div>
                         <div class="form-group">
                             <label for="instagram">Instagram</label>
-                            <input type="text" name="instagram" id="instagram" placeholder="@yritys">
+                            <input type="text" name="instagram" id="instagram" placeholder="@yritys" oninput="toggleInstaFeed('palvelu', this.value)">
                         </div>
+                    </div>
+                    <div class="form-group palveluala-only" id="insta-feed-opt-palvelu" style="display:none;">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                            <input type="checkbox" name="instagram_feed" id="instagram_feed_palvelu" value="kyllä">
+                            Näytä 3 viimeisintä Instagram-kuvaa sivustolla
+                        </label>
+                        <div class="hint">Vaatii lyhyen asetuksen käyttöönoton jälkeen (opastamme).</div>
                     </div>
 
                     <!-- Some: rakennusalalle omalla rivillä -->
                     <div class="form-row rakennusala-only" style="display:none;">
                         <div class="form-group">
                             <label for="instagram_raksa">Instagram</label>
-                            <input type="text" name="instagram" id="instagram_raksa" placeholder="@yritys">
+                            <input type="text" name="instagram" id="instagram_raksa" placeholder="@yritys" oninput="toggleInstaFeed('raksa', this.value)">
                         </div>
                         <div class="form-group">
                             <label for="facebook_raksa">Facebook</label>
                             <input type="text" name="facebook" id="facebook_raksa" placeholder="Yrityksen nimi">
                         </div>
+                    </div>
+                    <div class="form-group rakennusala-only" id="insta-feed-opt-raksa" style="display:none;">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                            <input type="checkbox" name="instagram_feed" id="instagram_feed_raksa" value="kyllä">
+                            Näytä 3 viimeisintä Instagram-kuvaa sivustolla
+                        </label>
+                        <div class="hint">Vaatii lyhyen asetuksen käyttöönoton jälkeen (opastamme).</div>
                     </div>
 
                     <div class="form-group palveluala-only">
@@ -1625,6 +1639,14 @@
             const isAlue = document.getElementById('maps-type-alue').checked;
             document.getElementById('maps-paikka-row').style.display = isAlue ? 'none' : 'block';
             document.getElementById('maps-alue-row').style.display = isAlue ? 'block' : 'none';
+        }
+        function toggleInstaFeed(variant, value) {
+            const id = variant === 'palvelu' ? 'insta-feed-opt-palvelu' : 'insta-feed-opt-raksa';
+            document.getElementById(id).style.display = value.trim() ? 'block' : 'none';
+            if (!value.trim()) {
+                const cbId = variant === 'palvelu' ? 'instagram_feed_palvelu' : 'instagram_feed_raksa';
+                document.getElementById(cbId).checked = false;
+            }
         }
 
         // ─── Referenssigalleria ────────────────────────────────────

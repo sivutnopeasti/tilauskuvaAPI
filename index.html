@@ -205,6 +205,29 @@
             cursor: pointer;
         }
         .cert-item:hover span { color: #1e3a5f; }
+
+        /* ── Sivujen määrä -valitsin ── */
+        .sivu-maara-selector { display:flex; gap:8px; margin-top:8px; }
+        .sivu-btn {
+            width:44px; height:44px; border-radius:8px; border:2px solid #e0e0e0;
+            background:#fff; font-size:1.1rem; font-weight:600; cursor:pointer;
+            transition:border-color .2s, background .2s, color .2s;
+        }
+        .sivu-btn:hover { border-color:#1e3a5f; }
+        .sivu-btn.active { border-color:#1e3a5f; background:#1e3a5f; color:#fff; }
+        .sivu-item {
+            border:1px solid #e8e8e8; border-radius:10px; padding:1rem;
+            margin-bottom:.75rem; background:#fafafa;
+        }
+        .sivu-item-locked {
+            background:#f4f4f4; color:#888; display:flex; align-items:center; gap:.75rem;
+        }
+        .sivu-item-locked em { font-size:.8rem; color:#aaa; }
+        .sivu-item-header { display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem; }
+        .sivu-numero { font-weight:700; font-size:.85rem; color:#666; min-width:50px; }
+        .sivu-item-header input[type="text"] { flex:1; }
+        .sivu-content .form-group:first-child { margin-top:0; }
+        .sivu-content .form-group:last-child { margin-bottom:0; }
     </style>
 </head>
 <body class="order-page">
@@ -408,6 +431,64 @@
                 <div class="form-section" data-section="6">
                     <h2 class="section-title">Sisältö ja kuvat</h2>
                     <p class="section-subtitle">Kerro palveluistasi ja lisää kuvia</p>
+
+                    <!-- SIVUJEN MÄÄRÄ -->
+                    <div class="form-group" id="sivu-maara-group">
+                        <label>Sivujen määrä</label>
+                        <div class="sivu-maara-selector">
+                            <button type="button" class="sivu-btn active" data-count="1" onclick="setSivuMaara(1)">1</button>
+                            <button type="button" class="sivu-btn" data-count="2" onclick="setSivuMaara(2)">2</button>
+                            <button type="button" class="sivu-btn" data-count="3" onclick="setSivuMaara(3)">3</button>
+                            <button type="button" class="sivu-btn" data-count="4" onclick="setSivuMaara(4)">4</button>
+                            <button type="button" class="sivu-btn" data-count="5" onclick="setSivuMaara(5)">5</button>
+                        </div>
+                        <div class="hint" id="sivu-maara-hint">1 sivu – hinta normaalin paketin mukaan</div>
+                        <input type="hidden" name="sivu_maara" id="sivu_maara" value="1">
+                    </div>
+
+                    <!-- SIVURAKENNE (piilotettu kun sivu_maara = 1) -->
+                    <div id="sivurakenne-section" style="display:none; margin-bottom:1.5rem;">
+                        <div class="sivu-item sivu-item-locked">
+                            <span class="sivu-numero">Sivu 1</span>
+                            <span>Etusivu <em>(aina mukana)</em></span>
+                        </div>
+                        <div class="sivu-item" id="sivu-item-2" style="display:none;">
+                            <div class="sivu-item-header">
+                                <span class="sivu-numero">Sivu 2</span>
+                                <input type="text" name="sivu_2_nimi" id="sivu_2_nimi"
+                                    placeholder="esim. Palvelut, Meistä, Yhteystiedot..."
+                                    oninput="updateSivuContent(2, this.value)" autocomplete="off">
+                            </div>
+                            <div class="sivu-content" id="sivu-content-2"></div>
+                        </div>
+                        <div class="sivu-item" id="sivu-item-3" style="display:none;">
+                            <div class="sivu-item-header">
+                                <span class="sivu-numero">Sivu 3</span>
+                                <input type="text" name="sivu_3_nimi" id="sivu_3_nimi"
+                                    placeholder="esim. Palvelut, Meistä, Yhteystiedot..."
+                                    oninput="updateSivuContent(3, this.value)" autocomplete="off">
+                            </div>
+                            <div class="sivu-content" id="sivu-content-3"></div>
+                        </div>
+                        <div class="sivu-item" id="sivu-item-4" style="display:none;">
+                            <div class="sivu-item-header">
+                                <span class="sivu-numero">Sivu 4</span>
+                                <input type="text" name="sivu_4_nimi" id="sivu_4_nimi"
+                                    placeholder="esim. Palvelut, Meistä, Yhteystiedot..."
+                                    oninput="updateSivuContent(4, this.value)" autocomplete="off">
+                            </div>
+                            <div class="sivu-content" id="sivu-content-4"></div>
+                        </div>
+                        <div class="sivu-item" id="sivu-item-5" style="display:none;">
+                            <div class="sivu-item-header">
+                                <span class="sivu-numero">Sivu 5</span>
+                                <input type="text" name="sivu_5_nimi" id="sivu_5_nimi"
+                                    placeholder="esim. Palvelut, Meistä, Yhteystiedot..."
+                                    oninput="updateSivuContent(5, this.value)" autocomplete="off">
+                            </div>
+                            <div class="sivu-content" id="sivu-content-5"></div>
+                        </div>
+                    </div>
 
                     <div class="form-group">
                         <label for="palvelut">Palvelut <span class="required">*</span></label>
@@ -1776,6 +1857,84 @@
 
         // Initialize
         updateColor('#1a5f4a');
+
+        // ── Sivujen määrä ──────────────────────────────────────────────
+        let sivuMaara = 1;
+
+        function setSivuMaara(n) {
+            sivuMaara = n;
+            document.getElementById('sivu_maara').value = n;
+            document.querySelectorAll('.sivu-btn').forEach(b =>
+                b.classList.toggle('active', parseInt(b.dataset.count) === n));
+            document.getElementById('sivurakenne-section').style.display = n > 1 ? '' : 'none';
+            for (let i = 2; i <= 5; i++)
+                document.getElementById('sivu-item-' + i).style.display = i <= n ? '' : 'none';
+            updatePakettiPricing(n);
+        }
+
+        function updatePakettiPricing(n) {
+            const hint = document.getElementById('sivu-maara-hint');
+            const sel  = document.getElementById('paketti');
+            if (!sel) return;
+            if (n === 1) {
+                hint.textContent = '1 sivu – hinta normaalin paketin mukaan';
+                sel.options[1] && (sel.options[1].text = '169 € + 8,90 € / kk (laskutus 12 kk välein)');
+                sel.options[2] && (sel.options[2].text = '169 € + 12,90 € / kk (laskutus 1 kk välein)');
+            } else {
+                hint.textContent = n + ' sivua – 249 € + 8,90 €/kk';
+                sel.options[1] && (sel.options[1].text = '249 € + 8,90 € / kk (laskutus 12 kk välein)');
+                sel.options[2] && (sel.options[2].text = '249 € + 12,90 € / kk (laskutus 1 kk välein)');
+            }
+        }
+
+        function detectSivuType(name) {
+            const n = (name || '').toLowerCase();
+            if (n.match(/palvelu|service/))                       return 'palvelut';
+            if (n.match(/meist|tarin|yrity|tiimi|about/))         return 'meista';
+            if (n.match(/yhteys|contact|ota yhteyttä/))           return 'yhteystiedot';
+            if (n.match(/referenssi|portfolio|kohteet|työnäytteet/)) return 'referenssit';
+            if (n.match(/hinnasto|hinnat|price/))                 return 'hinnasto';
+            return 'vapaa';
+        }
+
+        const sivuTypeTemplates = {
+            palvelut: function(n) { return '<div class="form-group">'
+                + '<label>Tämän sivun palvelut / sisältö</label>'
+                + '<textarea name="sivu_' + n + '_sisalto" rows="4" placeholder="Mitä palveluja tällä sivulla esitellään?..."></textarea>'
+                + '</div>'; },
+            meista: function(n) { return '<div class="form-group">'
+                + '<label>Yrityksen tarina / Meistä-teksti</label>'
+                + '<textarea name="sivu_' + n + '_sisalto" rows="4" placeholder="Milloin yritys perustettiin, keitä olette, mikä on teidän tarina?..."></textarea>'
+                + '</div>'; },
+            yhteystiedot: function(n) { return '<div class="form-group">'
+                + '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">'
+                + '<input type="checkbox" name="sivu_' + n + '_lomake" value="kyllä" style="width:16px;height:16px;flex-shrink:0;">'
+                + 'Lisää yhteydenottolomake sivulle</label>'
+                + '</div>'; },
+            referenssit: function(n) { return '<div class="form-group">'
+                + '<label>Referenssien kuvaus (vapaaehtoinen)</label>'
+                + '<textarea name="sivu_' + n + '_sisalto" rows="3" placeholder="Kuvaa projektien tai töidesi tyyliä..."></textarea>'
+                + '</div>'
+                + '<div class="form-group">'
+                + '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">'
+                + '<input type="checkbox" name="sivu_' + n + '_galleria" value="kyllä" checked style="width:16px;height:16px;flex-shrink:0;">'
+                + 'Lisää kuvagalleria referensseille</label>'
+                + '</div>'; },
+            hinnasto: function(n) { return '<div class="form-group">'
+                + '<label>Hinnastosisältö</label>'
+                + '<textarea name="sivu_' + n + '_sisalto" rows="4" placeholder="Palvelut ja hinnat..."></textarea>'
+                + '</div>'; },
+            vapaa: function(n) { return '<div class="form-group">'
+                + '<label>Sivun sisältö</label>'
+                + '<textarea name="sivu_' + n + '_sisalto" rows="4" placeholder="Mistä tämä sivu kertoo? Mitä haluat sivulle?..."></textarea>'
+                + '</div>'; },
+        };
+
+        function updateSivuContent(n, name) {
+            const type = detectSivuType(name);
+            const tpl  = sivuTypeTemplates[type] || sivuTypeTemplates.vapaa;
+            document.getElementById('sivu-content-' + n).innerHTML = tpl(n);
+        }
     </script>
 </body>
 </html>

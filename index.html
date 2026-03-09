@@ -1873,6 +1873,11 @@
             updatePakettiPricing(n);
         }
 
+        function getMultiPageSetupFee() {
+            const nykyiset = (document.getElementById('nykyiset_sivut') || {}).value || '';
+            return nykyiset.trim() ? 239 : 279;
+        }
+
         function updatePakettiPricing(n) {
             const hint = document.getElementById('sivu-maara-hint');
             const sel  = document.getElementById('paketti');
@@ -1882,11 +1887,17 @@
                 sel.options[1] && (sel.options[1].text = '169 € + 8,90 € / kk (laskutus 12 kk välein)');
                 sel.options[2] && (sel.options[2].text = '169 € + 12,90 € / kk (laskutus 1 kk välein)');
             } else {
-                hint.textContent = n + ' sivua – 249 € + 8,90 €/kk';
-                sel.options[1] && (sel.options[1].text = '249 € + 8,90 € / kk (laskutus 12 kk välein)');
-                sel.options[2] && (sel.options[2].text = '249 € + 12,90 € / kk (laskutus 1 kk välein)');
+                const fee = getMultiPageSetupFee();
+                hint.textContent = n + ' sivua – ' + fee + ' € + 8,90 €/kk';
+                sel.options[1] && (sel.options[1].text = fee + ' € + 8,90 € / kk (laskutus 12 kk välein)');
+                sel.options[2] && (sel.options[2].text = fee + ' € + 12,90 € / kk (laskutus 1 kk välein)');
             }
         }
+
+        // Päivitä hinta jos nykyiset_sivut-kenttä muuttuu Step 2:ssa
+        document.getElementById('nykyiset_sivut').addEventListener('input', function() {
+            if (sivuMaara > 1) updatePakettiPricing(sivuMaara);
+        });
 
         function detectSivuType(name) {
             const n = (name || '').toLowerCase();

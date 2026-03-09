@@ -442,7 +442,7 @@
                             <button type="button" class="sivu-btn" data-count="4" onclick="setSivuMaara(4)">4</button>
                             <button type="button" class="sivu-btn" data-count="5" onclick="setSivuMaara(5)">5</button>
                         </div>
-                        <div class="hint" id="sivu-maara-hint">1 sivu – hinta normaalin paketin mukaan</div>
+                        <div class="hint" id="sivu-maara-hint">1 sivu – 169 € + 8,90 €/kk</div>
                         <input type="hidden" name="sivu_maara" id="sivu_maara" value="1">
                     </div>
 
@@ -1877,7 +1877,7 @@
             const sel  = document.getElementById('paketti');
             if (!sel) return;
             if (n === 1) {
-                hint.textContent = '1 sivu – hinta normaalin paketin mukaan';
+                hint.textContent = '1 sivu – 169 € + 8,90 €/kk';
                 sel.options[1] && (sel.options[1].text = '169 € + 8,90 € / kk (laskutus 12 kk välein)');
                 sel.options[2] && (sel.options[2].text = '169 € + 12,90 € / kk (laskutus 1 kk välein)');
             } else {

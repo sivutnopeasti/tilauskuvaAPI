@@ -3204,3 +3204,22 @@ input[type="text"].hex-input {
         font-size: 1.5rem;
     }
 }
+
+/* Pieni puhelin */
+@media (max-width: 480px) {
+    .order-page {
+        padding: 0.5rem;
+    }
+
+    .order-form-container {
+        padding: 1rem;
+    }
+
+    .style-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .image-preview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
